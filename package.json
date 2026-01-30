@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate": "bun x tsx scripts/migrate-to-kv.ts",
+    "redis:view": "bun x tsx scripts/view-redis.ts"
   },
   "dependencies": {
     "@vercel/kv": "^3.0.0",
+    "ioredis": "^5.9.2",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

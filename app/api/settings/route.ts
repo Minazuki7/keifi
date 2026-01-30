@@ -1,19 +1,24 @@
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { getValue, setValue } from "@/lib/redis";
 
 const SETTINGS_KEY = "keifi-settings";
 
-const defaultSettings = {
+type SiteSettings = {
+  whatsappPhone: string;
+  googleFormUrl: string;
+};
+
+const defaultSettings: SiteSettings = {
   whatsappPhone: "21612345678",
   googleFormUrl: "https://forms.gle/your-form-id",
 };
 
 export async function GET() {
   try {
-    const settings = await kv.get(SETTINGS_KEY);
+    const settings = await getValue<SiteSettings>(SETTINGS_KEY);
     
     if (!settings) {
-      await kv.set(SETTINGS_KEY, defaultSettings);
+      await setValue(SETTINGS_KEY, defaultSettings);
       return NextResponse.json(defaultSettings);
     }
     
@@ -26,7 +31,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const settings = await request.json();
-    await kv.set(SETTINGS_KEY, settings);
+    await setValue(SETTINGS_KEY, settings);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(

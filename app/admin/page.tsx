@@ -6,8 +6,6 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { Product, ProductCategory } from "@/data/products";
 import Link from "next/link";
 
-const ADMIN_PASSWORD = "keifi2024";
-
 const categories: ProductCategory[] = [
   "INJECTABLES",
   "PEPTIDES",
@@ -26,15 +24,30 @@ export default function AdminPage() {
   }, []);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem("keifi-admin-auth", "true");
-      setError("");
-    } else {
-      setError("Invalid password");
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (res.ok) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem("keifi-admin-auth", "true");
+      } else {
+        setError("Invalid password");
+      }
+    } catch {
+      setError("Connection error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,9 +94,10 @@ export default function AdminPage() {
 
               <button
                 type="submit"
-                className="w-full rounded-lg bg-brand py-3 font-semibold text-white transition-colors hover:bg-brand-hover"
+                disabled={isSubmitting}
+                className="w-full rounded-lg bg-brand py-3 font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
               >
-                Login
+                {isSubmitting ? "Logging in..." : "Login"}
               </button>
             </form>
 

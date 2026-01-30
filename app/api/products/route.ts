@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
-import { products as defaultProducts } from "@/data/products";
+import { getValue, setValue } from "@/lib/redis";
+import { products as defaultProducts, Product } from "@/data/products";
 
 const PRODUCTS_KEY = "keifi-products";
 
 export async function GET() {
   try {
-    const products = await kv.get(PRODUCTS_KEY);
+    const products = await getValue<Product[]>(PRODUCTS_KEY);
     
     if (!products) {
-      await kv.set(PRODUCTS_KEY, defaultProducts);
+      await setValue(PRODUCTS_KEY, defaultProducts);
       return NextResponse.json(defaultProducts);
     }
     
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const products = await request.json();
-    await kv.set(PRODUCTS_KEY, products);
+    await setValue(PRODUCTS_KEY, products);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
