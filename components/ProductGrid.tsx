@@ -83,7 +83,7 @@ function ProductGridInner({
             <button
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 0}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-border bg-card-bg text-text-primary shadow-sm transition-all hover:border-brand hover:bg-hover-bg hover:text-brand disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-card-bg disabled:hover:text-text-primary"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-border bg-card-bg text-text-primary shadow-sm transition-all hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-hover-bg disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-card-bg disabled:hover:text-text-primary"
             >
               <svg
                 className="h-5 w-5"
@@ -131,8 +131,8 @@ function ProductGridInner({
                     onClick={() => goToPage(i)}
                     className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold transition-all ${
                       currentPage === i
-                        ? "bg-brand text-white shadow-md shadow-brand/30"
-                        : "border-2 border-border bg-card-bg text-text-primary shadow-sm hover:border-brand hover:text-brand"
+                        ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-md"
+                        : "border-2 border-border bg-card-bg text-text-primary shadow-sm hover:border-neutral-400 dark:hover:border-neutral-600"
                     }`}
                   >
                     {i + 1}
@@ -144,7 +144,7 @@ function ProductGridInner({
             <button
               onClick={() => goToPage(currentPage + 1)}
               disabled={currentPage === totalPages - 1}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-border bg-card-bg text-text-primary shadow-sm transition-all hover:border-brand hover:bg-hover-bg hover:text-brand disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-card-bg disabled:hover:text-text-primary"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-border bg-card-bg text-text-primary shadow-sm transition-all hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-hover-bg disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-card-bg disabled:hover:text-text-primary"
             >
               <svg
                 className="h-5 w-5"

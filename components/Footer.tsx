@@ -13,7 +13,7 @@ export default function Footer() {
           <div>
             <Link
               href="/"
-              className="mb-4 inline-block text-xl font-bold text-brand transition-colors hover:text-brand-hover"
+              className="mb-4 inline-block text-xl font-bold text-text-primary transition-colors hover:text-text-muted"
             >
               Keifi
             </Link>

@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <body
-        className={`${inter.variable} min-h-screen bg-[#F9FAFB] font-sans text-[#111827] antialiased transition-colors duration-200 dark:bg-[#050816] dark:text-[#E5E7EB]`}
+        className={`${inter.variable} min-h-screen bg-white font-sans text-neutral-900 antialiased transition-colors duration-200 dark:bg-neutral-950 dark:text-neutral-100`}
       >
         <ClientLayout>{children}</ClientLayout>
       </body>

@@ -77,10 +77,10 @@ export default function CartPanel({
       {!isExpanded && (
         <button
           onClick={() => setIsExpanded(true)}
-          className="group relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-hover shadow-lg shadow-brand/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-brand/40 sm:h-18 sm:w-18"
+          className="group relative flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 dark:bg-neutral-100 shadow-lg shadow-neutral-900/30 dark:shadow-neutral-100/20 transition-all duration-300 hover:scale-110 hover:shadow-xl sm:h-18 sm:w-18"
         >
           <svg
-            className="h-7 w-7 text-white sm:h-8 sm:w-8"
+            className="h-7 w-7 text-white dark:text-neutral-900 sm:h-8 sm:w-8"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -107,11 +107,11 @@ export default function CartPanel({
       {isExpanded && (
         <div className="w-[calc(100vw-2rem)] max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300 sm:w-96">
           <div className="overflow-hidden rounded-2xl border border-card-border bg-card-bg shadow-2xl">
-            <div className="flex items-center justify-between bg-gradient-to-r from-brand to-brand-hover px-4 py-4">
+            <div className="flex items-center justify-between bg-neutral-900 dark:bg-neutral-100 px-4 py-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 dark:bg-black/10">
                   <svg
-                    className="h-5 w-5 text-white"
+                    className="h-5 w-5 text-white dark:text-neutral-900"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -125,15 +125,17 @@ export default function CartPanel({
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-white">Your Selection</h3>
-                  <p className="text-sm text-white/80">
+                  <h3 className="font-bold text-white dark:text-neutral-900">
+                    Your Selection
+                  </h3>
+                  <p className="text-sm text-white/80 dark:text-neutral-600">
                     {totalItemCount} {totalItemCount === 1 ? "item" : "items"}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsExpanded(false)}
-                className="rounded-full bg-white/20 p-2 text-white transition-colors hover:bg-white/30"
+                className="rounded-full bg-white/20 dark:bg-black/10 p-2 text-white dark:text-neutral-900 transition-colors hover:bg-white/30 dark:hover:bg-black/20"
                 title="Minimize"
               >
                 <svg
@@ -161,7 +163,7 @@ export default function CartPanel({
                     key={product.id}
                     className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-hover-bg"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-badge-bg text-sm font-bold text-brand">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-badge-bg text-sm font-bold text-text-primary">
                       {product.name.charAt(0)}
                     </div>
 
@@ -219,7 +221,7 @@ export default function CartPanel({
                     )}
 
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-brand">
+                      <span className="font-semibold text-text-primary">
                         {lineTotal} TND
                       </span>
                       {onRemoveItem && (
@@ -278,7 +280,7 @@ export default function CartPanel({
                       onClick={() => setCurrentPage(i)}
                       className={`h-2 w-2 rounded-full transition-all ${
                         currentPage === i
-                          ? "w-4 bg-brand"
+                          ? "w-4 bg-neutral-900 dark:bg-neutral-100"
                           : "bg-text-muted hover:bg-text-secondary"
                       }`}
                     />
@@ -315,7 +317,7 @@ export default function CartPanel({
                   Total ({totalItemCount}{" "}
                   {totalItemCount === 1 ? "item" : "items"})
                 </span>
-                <span className="text-2xl font-bold text-brand">
+                <span className="text-2xl font-bold text-text-primary">
                   {total} TND
                 </span>
               </div>

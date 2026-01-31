@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { ProductCategory } from "@/data/products";
 import { useProducts } from "@/contexts/ProductContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useCart } from "@/contexts/CartContext";
 import CategoryTabs from "@/components/CategoryTabs";
 import ProductGrid from "@/components/ProductGrid";
 import CartPanel from "@/components/CartPanel";
@@ -16,56 +17,27 @@ const categories: ProductCategory[] = [
   "SARMS",
 ];
 
-type CartItems = Record<string, number>;
-
 export default function Home() {
   const { products } = useProducts();
   const { settings } = useSettings();
+  const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
 
   const [selectedCategory, setSelectedCategory] = useState<
     ProductCategory | "ALL"
   >("ALL");
 
-  const [cartItems, setCartItems] = useState<CartItems>({});
-
-  const handleUpdateQuantity = useCallback(
-    (productId: string, quantity: number) => {
-      setCartItems((prev) => {
-        if (quantity <= 0) {
-          const { [productId]: removed, ...rest } = prev;
-          void removed;
-          return rest;
-        }
-        return { ...prev, [productId]: quantity };
-      });
-    },
-    [],
-  );
-
-  const handleClearSelection = useCallback(() => {
-    setCartItems({});
-  }, []);
-
-  const handleRemoveItem = useCallback((productId: string) => {
-    setCartItems((prev) => {
-      const { [productId]: removed, ...rest } = prev;
-      void removed;
-      return rest;
-    });
-  }, []);
-
   return (
     <div className="min-h-screen">
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#38BDF8]/5 via-transparent to-transparent dark:from-[#38BDF8]/10" />
-        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-[#38BDF8]/5 blur-3xl dark:bg-[#38BDF8]/10" />
-        <div className="absolute -right-40 top-20 h-80 w-80 rounded-full bg-[#22C55E]/5 blur-3xl dark:bg-[#22C55E]/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-200/50 via-transparent to-transparent dark:from-neutral-800/50" />
+        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-neutral-300/30 blur-3xl dark:bg-neutral-700/30" />
+        <div className="absolute -right-40 top-20 h-80 w-80 rounded-full bg-neutral-400/20 blur-3xl dark:bg-neutral-600/20" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="text-brand">Keifi</span>{" "}
-              <span className="text-text-primary">Performance Products</span>
+              <span className="text-text-primary">Keifi</span>{" "}
+              <span className="text-text-muted">Performance Products</span>
             </h1>
 
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-text-secondary sm:text-xl">
@@ -78,7 +50,7 @@ export default function Home() {
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <a
                 href="#products"
-                className="inline-flex items-center justify-center rounded-xl bg-brand px-8 py-4 text-base font-semibold text-white transition-all duration-200 hover:bg-brand-hover hover:shadow-lg hover:shadow-brand/30 sm:text-lg"
+                className="inline-flex items-center justify-center rounded-xl bg-brand px-8 py-4 text-base font-semibold text-white! dark:text-black transition-all duration-200 hover:bg-brand-hover hover:shadow-lg sm:text-lg"
               >
                 Browse Products
               </a>
@@ -131,7 +103,7 @@ export default function Home() {
             products={products}
             selectedCategory={selectedCategory}
             cartItems={cartItems}
-            onUpdateQuantity={handleUpdateQuantity}
+            onUpdateQuantity={updateQuantity}
           />
         </div>
       </section>
@@ -141,9 +113,9 @@ export default function Home() {
       <CartPanel
         products={products}
         cartItems={cartItems}
-        onClearSelection={handleClearSelection}
-        onRemoveItem={handleRemoveItem}
-        onUpdateQuantity={handleUpdateQuantity}
+        onClearSelection={clearCart}
+        onRemoveItem={removeItem}
+        onUpdateQuantity={updateQuantity}
       />
     </div>
   );

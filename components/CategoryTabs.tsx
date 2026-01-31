@@ -36,8 +36,8 @@ export default function CategoryTabs({
               sm:px-6 sm:py-3 sm:text-base
               ${
                 isSelected
-                  ? "bg-brand text-white shadow-lg shadow-brand/30"
-                  : "border-2 border-border bg-card-bg text-text-primary hover:border-brand hover:text-brand hover:shadow-md"
+                  ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-lg"
+                  : "border-2 border-border bg-card-bg text-text-primary hover:border-neutral-400 dark:hover:border-neutral-600 hover:shadow-md"
               }
             `}
           >

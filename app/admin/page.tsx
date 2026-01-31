@@ -256,7 +256,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             </button>
             <button
               onClick={() => setIsAddingNew(true)}
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+              className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover dark:text-black"
             >
               + Add Product
             </button>
