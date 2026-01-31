@@ -95,7 +95,7 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-lg bg-brand py-3 font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
+                className="w-full rounded-lg bg-neutral-900 dark:bg-neutral-100 py-3 font-semibold text-white dark:text-neutral-900 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200 disabled:opacity-50"
               >
                 {isSubmitting ? "Logging in..." : "Login"}
               </button>
@@ -256,7 +256,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             </button>
             <button
               onClick={() => setIsAddingNew(true)}
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover dark:text-black"
+              className="rounded-lg bg-neutral-900 dark:bg-neutral-100 px-4 py-2 text-sm font-semibold text-white dark:text-neutral-900 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200"
             >
               + Add Product
             </button>
@@ -709,7 +709,7 @@ function ProductEditModal({
             </button>
             <button
               type="submit"
-              className="flex-1 rounded-lg bg-brand py-3 font-semibold text-white transition-colors hover:bg-brand-hover"
+              className="flex-1 rounded-lg bg-neutral-900 dark:bg-neutral-100 py-3 font-semibold text-white dark:text-neutral-900 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200"
             >
               Save Changes
             </button>
@@ -940,7 +940,7 @@ function ProductAddModal({
             </button>
             <button
               type="submit"
-              className="flex-1 rounded-lg bg-brand py-3 font-semibold text-white transition-colors hover:bg-brand-hover"
+              className="flex-1 rounded-lg bg-neutral-900 dark:bg-neutral-100 py-3 font-semibold text-white dark:text-neutral-900 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200"
             >
               Add Product
             </button>
@@ -1020,24 +1020,6 @@ function SettingsModal({
             </p>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-text-secondary">
-              Google Form URL
-            </label>
-            <input
-              type="url"
-              value={form.googleFormUrl}
-              onChange={(e) =>
-                setForm({ ...form, googleFormUrl: e.target.value })
-              }
-              placeholder="https://forms.gle/your-form-id"
-              className="w-full rounded-lg border border-border bg-background px-4 py-3 text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
-            />
-            <p className="mt-1 text-xs text-text-muted">
-              Paste your Google Form share link here
-            </p>
-          </div>
-
           <div className="rounded-lg border border-brand/20 bg-brand/5 p-4">
             <p className="text-sm text-text-secondary">
               <strong className="text-brand">Note:</strong> These settings are
@@ -1056,7 +1038,7 @@ function SettingsModal({
             </button>
             <button
               type="submit"
-              className="flex-1 rounded-lg bg-brand py-3 font-semibold text-white transition-colors hover:bg-brand-hover"
+              className="flex-1 rounded-lg bg-neutral-900 dark:bg-neutral-100 py-3 font-semibold text-white dark:text-neutral-900 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200"
             >
               Save Settings
             </button>

@@ -50,7 +50,7 @@ export default function Home() {
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <a
                 href="#products"
-                className="inline-flex items-center justify-center rounded-xl bg-brand px-8 py-4 text-base font-semibold text-white! dark:text-black transition-all duration-200 hover:bg-brand-hover hover:shadow-lg sm:text-lg"
+                className="inline-flex items-center justify-center rounded-xl bg-neutral-900 dark:bg-neutral-100 px-8 py-4 text-base font-semibold text-white dark:text-neutral-900 transition-all duration-200 hover:bg-neutral-800 dark:hover:bg-neutral-200 hover:shadow-lg sm:text-lg"
               >
                 Browse Products
               </a>
