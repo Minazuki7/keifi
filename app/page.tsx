@@ -29,18 +29,32 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-200/50 via-transparent to-transparent dark:from-neutral-800/50" />
-        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-neutral-300/30 blur-3xl dark:bg-neutral-700/30" />
-        <div className="absolute -right-40 top-20 h-80 w-80 rounded-full bg-neutral-400/20 blur-3xl dark:bg-neutral-600/20" />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source
+            src="/Laboratory Experiment 4K Stock Footage.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-200/60 via-neutral-200/40 to-neutral-100/30 dark:from-neutral-900/70 dark:via-neutral-900/50 dark:to-neutral-800/40" />
+        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-neutral-300/20 blur-3xl dark:bg-neutral-700/20" />
+        <div className="absolute -right-40 top-20 h-80 w-80 rounded-full bg-neutral-400/10 blur-3xl dark:bg-neutral-600/15" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="text-text-primary">Keifi</span>{" "}
+              <span className="text-white">Keifi</span>{" "}
               <span className="text-text-muted">Performance Products</span>
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-text-secondary sm:text-xl">
+            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-white sm:text-xl">
               Premium quality compounds for performance optimization and
               recovery. All products are carefully sourced and tested for purity
               and effectiveness.{" "}
