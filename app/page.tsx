@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import {
   BRAND_LABELS,
   ProductBrand,
@@ -25,8 +24,6 @@ const brandOptionLabels: Record<ProductBrand | "ALL", string> = {
 };
 
 export default function Home() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const { products } = useProducts();
   const { settings } = useSettings();
   const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
@@ -38,20 +35,9 @@ export default function Home() {
     ProductCategory | "ALL"
   >("ALL");
 
-  useEffect(() => {
-    const brandParam = searchParams.get("brand");
-    const nextBrand: ProductBrand | "ALL" =
-      brandParam === "KEIFI" || brandParam === "SYROCS" ? brandParam : "ALL";
-    setSelectedBrand(nextBrand);
-  }, [searchParams]);
-
-  useEffect(() => {
-    setSelectedCategory("ALL");
-  }, [selectedBrand]);
-
   const handleBrandChange = (brand: ProductBrand | "ALL") => {
-    const href = brand === "ALL" ? "/" : `/?brand=${brand}`;
-    router.replace(href, { scroll: false });
+    setSelectedBrand(brand);
+    setSelectedCategory("ALL");
   };
 
   const brandProducts = products.filter((product) => {
