@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { ProductCategory } from "@/data/products";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  BRAND_LABELS,
+  ProductBrand,
+  ProductCategory,
+  resolveProductBrand,
+} from "@/data/products";
 import { useProducts } from "@/contexts/ProductContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useCart } from "@/contexts/CartContext";
@@ -10,25 +16,74 @@ import ProductGrid from "@/components/ProductGrid";
 import CartPanel from "@/components/CartPanel";
 import Footer from "@/components/Footer";
 
-const categories: ProductCategory[] = [
-  "INJECTABLES",
-  "PEPTIDES",
-  "ORALS",
-  "SARMS",
-];
+const brandOptions: Array<ProductBrand | "ALL"> = ["ALL", "KEIFI", "SYROCS"];
+
+const brandOptionLabels: Record<ProductBrand | "ALL", string> = {
+  ALL: "Both Brands",
+  KEIFI: BRAND_LABELS.KEIFI,
+  SYROCS: BRAND_LABELS.SYROCS,
+};
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { products } = useProducts();
   const { settings } = useSettings();
   const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
+  const [selectedBrand, setSelectedBrand] = useState<ProductBrand | "ALL">(
+    "ALL",
+  );
 
   const [selectedCategory, setSelectedCategory] = useState<
     ProductCategory | "ALL"
   >("ALL");
 
+  useEffect(() => {
+    const brandParam = searchParams.get("brand");
+    const nextBrand: ProductBrand | "ALL" =
+      brandParam === "KEIFI" || brandParam === "SYROCS" ? brandParam : "ALL";
+    setSelectedBrand(nextBrand);
+  }, [searchParams]);
+
+  useEffect(() => {
+    setSelectedCategory("ALL");
+  }, [selectedBrand]);
+
+  const handleBrandChange = (brand: ProductBrand | "ALL") => {
+    const href = brand === "ALL" ? "/" : `/?brand=${brand}`;
+    router.replace(href, { scroll: false });
+  };
+
+  const brandProducts = products.filter((product) => {
+    if (selectedBrand === "ALL") return true;
+    return resolveProductBrand(product) === selectedBrand;
+  });
+
+  const availableCategories = useMemo(() => {
+    const order: ProductCategory[] = [
+      "INJECTABLES",
+      "PEPTIDES",
+      "ORALS",
+      "SARMS",
+    ];
+    const set = new Set(brandProducts.map((item) => item.category));
+    return order.filter((category) => set.has(category));
+  }, [brandProducts]);
+
+  const visibleProducts =
+    selectedCategory === "ALL"
+      ? brandProducts
+      : brandProducts.filter(
+          (product) => product.category === selectedCategory,
+        );
+
+  const availableCount = visibleProducts.filter(
+    (item) => item.isAvailable,
+  ).length;
+
   return (
     <div className="min-h-screen">
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden border-b border-border bg-card-bg">
         <video
           autoPlay
           muted
@@ -41,48 +96,67 @@ export default function Home() {
             type="video/mp4"
           />
         </video>
-
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-200/60 via-neutral-200/40 to-neutral-100/30 dark:from-neutral-900/70 dark:via-neutral-900/50 dark:to-neutral-800/40" />
-        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-neutral-300/20 blur-3xl dark:bg-neutral-700/20" />
-        <div className="absolute -right-40 top-20 h-80 w-80 rounded-full bg-neutral-400/10 blur-3xl dark:bg-neutral-600/15" />
-
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="text-white">Keifi</span>{" "}
-              <span className="text-text-muted">Performance Products</span>
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(255,255,255,0.12)_0%,transparent_40%),radial-gradient(circle_at_85%_35%,rgba(255,255,255,0.08)_0%,transparent_35%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="mb-4 inline-flex rounded-full border border-white/20 bg-black/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/80 sm:text-sm">
+              Ghost Catalogue
+            </p>
+            <h1 className="mb-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Two brands. One clean catalogue.
             </h1>
-
-            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-white sm:text-xl">
-              Premium quality compounds for performance optimization and
-              recovery. All products are carefully sourced and tested for purity
-              and effectiveness.{" "}
-              <span className="font-medium text-warning">Use responsibly.</span>
+            <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
+              Explore the full Ghost product line across Keifi and Syrocs.
+              Switch brand, pick a category, and place your order in seconds.
             </p>
 
-            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <div className="mx-auto mb-8 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
+              {brandOptions.map((brand) => {
+                const isActive = selectedBrand === brand;
+                const productCount = products.filter(
+                  (product) =>
+                    brand === "ALL" || resolveProductBrand(product) === brand,
+                ).length;
+
+                return (
+                  <button
+                    key={brand}
+                    onClick={() => {
+                      handleBrandChange(brand);
+                    }}
+                    className={`rounded-2xl border px-5 py-4 text-left transition-all ${
+                      isActive
+                        ? "border-white/70 bg-white/15 shadow-md"
+                        : "border-white/25 bg-black/35 hover:border-white/50"
+                    }`}
+                  >
+                    <p className="text-sm text-white/70">Brand</p>
+                    <p className="mt-1 text-lg font-bold text-white">
+                      {brandOptionLabels[brand]}
+                    </p>
+                    <p className="mt-1 text-xs text-white/70">
+                      {productCount} items
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <a
                 href="#products"
-                className="inline-flex items-center justify-center rounded-xl bg-neutral-900 dark:bg-neutral-100 px-8 py-4 text-base font-semibold text-white dark:text-neutral-900 transition-all duration-200 hover:bg-neutral-800 dark:hover:bg-neutral-200 hover:shadow-lg sm:text-lg"
+                className="inline-flex items-center justify-center rounded-xl bg-white px-7 py-3 font-semibold text-neutral-900 transition-colors hover:bg-neutral-200"
               >
-                Browse Products
+                Browse {brandOptionLabels[selectedBrand]}
               </a>
               <a
                 href={`https://wa.me/${settings.whatsappPhone}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-success bg-transparent px-8 py-4 text-base font-semibold text-success transition-all duration-200 hover:bg-success/10 sm:text-lg"
+                className="inline-flex items-center justify-center rounded-xl border border-success px-7 py-3 font-semibold text-success transition-colors hover:bg-success/15"
               >
-                <svg
-                  className="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
-                Order on WhatsApp
+                Quick WhatsApp Order
               </a>
             </div>
           </div>
@@ -91,14 +165,21 @@ export default function Home() {
 
       <section className="border-y border-border bg-card-bg py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-8 text-center text-xl font-bold text-text-primary sm:text-2xl">
-            Browse by Category
-          </h2>
-          <CategoryTabs
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onSelect={setSelectedCategory}
-          />
+          <div className="mb-6 text-center">
+            <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
+              {brandOptionLabels[selectedBrand]} categories
+            </h2>
+            <p className="mt-2 text-sm text-text-secondary">
+              {availableCount} available of {visibleProducts.length} shown
+            </p>
+          </div>
+          <div className="mx-auto flex justify-center">
+            <CategoryTabs
+              categories={availableCategories}
+              selectedCategory={selectedCategory}
+              onSelect={setSelectedCategory}
+            />
+          </div>
         </div>
       </section>
 
@@ -106,15 +187,15 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center sm:mb-14">
             <h2 className="mb-3 text-3xl font-bold text-text-primary sm:text-4xl">
-              Our Products
+              {brandOptionLabels[selectedBrand]} Product List
             </h2>
             <p className="mx-auto max-w-xl text-text-secondary">
-              Browse our selection of premium performance products. Select
-              multiple items and order them all at once via WhatsApp.
+              Filtered catalogue from Ghost. Add products to cart and checkout
+              directly on WhatsApp.
             </p>
           </div>
           <ProductGrid
-            products={products}
+            products={brandProducts}
             selectedCategory={selectedCategory}
             cartItems={cartItems}
             onUpdateQuantity={updateQuantity}

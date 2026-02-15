@@ -2,10 +2,14 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { use } from "react";
-import { ProductCategory } from "@/data/products";
+import {
+  BRAND_LABELS,
+  ProductCategory,
+  resolveProductBrand,
+} from "@/data/products";
 import { useProducts } from "@/contexts/ProductContext";
-import { useSettings } from "@/contexts/SettingsContext";
 import { useCart } from "@/contexts/CartContext";
 import CartPanel from "@/components/CartPanel";
 
@@ -51,7 +55,6 @@ type Props = {
 export default function ProductDetailPage({ params }: Props) {
   const { id } = use(params);
   const { products } = useProducts();
-  const { settings } = useSettings();
   const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
   const product = products.find((p) => p.id === id);
 
@@ -60,11 +63,17 @@ export default function ProductDetailPage({ params }: Props) {
   }
 
   const { bg, text } = categoryColors[product.category];
+  const brand = resolveProductBrand(product);
   const quantity = cartItems[product.id] || 0;
   const isInCart = quantity > 0;
 
   const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
+    .filter(
+      (p) =>
+        p.category === product.category &&
+        p.id !== product.id &&
+        resolveProductBrand(p) === brand,
+    )
     .slice(0, 4);
 
   return (
@@ -85,6 +94,8 @@ export default function ProductDetailPage({ params }: Props) {
             Products
           </Link>
           <span className="text-text-muted">/</span>
+          <span className="text-text-muted">{BRAND_LABELS[brand]}</span>
+          <span className="text-text-muted">/</span>
           <span className="text-text-primary">{product.name}</span>
         </nav>
       </div>
@@ -93,9 +104,11 @@ export default function ProductDetailPage({ params }: Props) {
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="relative aspect-square overflow-hidden rounded-2xl bg-badge-bg">
             {product.imageUrl ? (
-              <img
+              <Image
                 src={product.imageUrl}
                 alt={product.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -117,6 +130,9 @@ export default function ProductDetailPage({ params }: Props) {
 
           <div className="flex flex-col">
             <div className="mb-4">
+              <span className="mb-3 mr-2 inline-block rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-text-secondary">
+                {BRAND_LABELS[brand]}
+              </span>
               <span
                 className={`inline-block rounded-full px-4 py-1.5 text-sm font-medium ${bg} ${text}`}
               >
@@ -303,9 +319,11 @@ export default function ProductDetailPage({ params }: Props) {
                   >
                     <div className="mb-3 aspect-square overflow-hidden rounded-lg bg-badge-bg">
                       {relatedProduct.imageUrl ? (
-                        <img
+                        <Image
                           src={relatedProduct.imageUrl}
                           alt={relatedProduct.name}
+                          width={400}
+                          height={400}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (

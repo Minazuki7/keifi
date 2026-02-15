@@ -1,7 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Product, ProductCategory } from "@/data/products";
+import Image from "next/image";
+import {
+  BRAND_LABELS,
+  Product,
+  ProductCategory,
+  resolveProductBrand,
+} from "@/data/products";
 
 type ProductCardProps = {
   product: Product;
@@ -51,6 +57,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const router = useRouter();
   const { bg, text } = categoryColors[product.category];
+  const brand = resolveProductBrand(product);
   const isInCart = quantity > 0;
 
   const handleCardClick = () => {
@@ -85,9 +92,11 @@ export default function ProductCard({
 
       <div className="relative aspect-square w-full overflow-hidden bg-badge-bg">
         {product.imageUrl ? (
-          <img
+          <Image
             src={product.imageUrl}
             alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
@@ -109,6 +118,9 @@ export default function ProductCard({
 
       <div className="flex flex-1 flex-col p-4 sm:p-5">
         <div className="mb-3">
+          <span className="mr-2 inline-block rounded-full border border-border px-3 py-1 text-xs font-semibold text-text-secondary">
+            {BRAND_LABELS[brand]}
+          </span>
           <span
             className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${bg} ${text}`}
           >

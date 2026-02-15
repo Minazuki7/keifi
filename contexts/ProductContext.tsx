@@ -10,6 +10,12 @@ import {
 } from "react";
 import { products as defaultProducts, Product } from "@/data/products";
 
+const normalizeProducts = (items: Product[]): Product[] =>
+  items.map((product) => ({
+    ...product,
+    brand: product.brand ?? "KEIFI",
+  }));
+
 type ProductContextType = {
   products: Product[];
   isLoading: boolean;
@@ -22,7 +28,9 @@ type ProductContextType = {
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(defaultProducts);
+  const [products, setProducts] = useState<Product[]>(
+    normalizeProducts(defaultProducts),
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +39,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         const res = await fetch("/api/products");
         if (res.ok) {
           const data = await res.json();
-          setProducts(data);
+          setProducts(normalizeProducts(data));
         }
       } catch {
       } finally {
@@ -73,7 +81,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   const addProduct = (product: Product) => {
     setProducts((prev) => {
-      const updated = [...prev, product];
+      const updated = [
+        ...prev,
+        { ...product, brand: product.brand ?? "KEIFI" },
+      ];
       saveProducts(updated);
       return updated;
     });
@@ -88,8 +99,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   const resetToDefaults = () => {
-    setProducts(defaultProducts);
-    saveProducts(defaultProducts);
+    const defaults = normalizeProducts(defaultProducts);
+    setProducts(defaults);
+    saveProducts(defaults);
   };
 
   return (

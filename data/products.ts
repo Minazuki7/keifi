@@ -1,8 +1,11 @@
 export type ProductCategory = "SARMS" | "INJECTABLES" | "PEPTIDES" | "ORALS";
 
+export type ProductBrand = "KEIFI" | "SYROCS";
+
 export type Product = {
   id: string;
   name: string;
+  brand?: ProductBrand;
   category: ProductCategory;
   chemicalName: string;
   description: string;
@@ -15,10 +18,110 @@ export type Product = {
   whatsappMessage: string;
 };
 
+export const BRANDS: ProductBrand[] = ["KEIFI", "SYROCS"];
+
+export const BRAND_LABELS: Record<ProductBrand, string> = {
+  KEIFI: "Keifi",
+  SYROCS: "Syrocs",
+};
+
+export const resolveProductBrand = (product: Product): ProductBrand =>
+  product.brand ?? "KEIFI";
+
 const msg = (name: string) =>
   `Hi, I'm interested in ordering ${name}. Please confirm availability.`;
 
 export const products: Product[] = [
+  {
+    id: "syr-inj-001",
+    name: "Syrocs Test E 300",
+    brand: "SYROCS",
+    category: "INJECTABLES",
+    chemicalName: "Testosterone Enanthate",
+    description:
+      "High-concentration testosterone enanthate built for stable weekly protocols and clean recovery support.",
+    strength: "300mg",
+    quantity: "10ml Vial",
+    price: 165,
+    priceDisplay: "165 TND",
+    isAvailable: true,
+    whatsappMessage: msg("Syrocs Test E 300"),
+  },
+  {
+    id: "syr-inj-002",
+    name: "Syrocs Primo 150",
+    brand: "SYROCS",
+    category: "INJECTABLES",
+    chemicalName: "Methenolone Enanthate",
+    description:
+      "Balanced injectable primobolan profile focused on lean mass retention and lower water fluctuation.",
+    strength: "150mg",
+    quantity: "10ml Vial",
+    price: 230,
+    priceDisplay: "230 TND",
+    isAvailable: true,
+    whatsappMessage: msg("Syrocs Primo 150"),
+  },
+  {
+    id: "syr-pep-001",
+    name: "Syrocs CJC/IPA Stack",
+    brand: "SYROCS",
+    category: "PEPTIDES",
+    chemicalName: "CJC-1295 + Ipamorelin",
+    description:
+      "Recovery-oriented peptide pairing for improved sleep quality, appetite control and GH pulse support.",
+    strength: "5mg + 5mg",
+    quantity: "10 Vials",
+    price: 620,
+    priceDisplay: "620 TND",
+    isAvailable: true,
+    whatsappMessage: msg("Syrocs CJC/IPA Stack"),
+  },
+  {
+    id: "syr-pep-002",
+    name: "Syrocs BPC-157",
+    brand: "SYROCS",
+    category: "PEPTIDES",
+    chemicalName: "Body Protective Compound-157",
+    description:
+      "Popular peptide option for connective tissue support and intensive recovery blocks.",
+    strength: "5mg",
+    quantity: "5 Vials",
+    price: 340,
+    priceDisplay: "340 TND",
+    isAvailable: true,
+    whatsappMessage: msg("Syrocs BPC-157"),
+  },
+  {
+    id: "syr-orl-001",
+    name: "Syrocs Turinabol 20",
+    brand: "SYROCS",
+    category: "ORALS",
+    chemicalName: "Chlorodehydromethyltestosterone",
+    description:
+      "Dry-gain oral profile aimed at clean progression with lower estrogenic side noise.",
+    strength: "20mg",
+    quantity: "100 Tablets",
+    price: 170,
+    priceDisplay: "170 TND",
+    isAvailable: true,
+    whatsappMessage: msg("Syrocs Turinabol 20"),
+  },
+  {
+    id: "syr-orl-002",
+    name: "Syrocs Anavar 10",
+    brand: "SYROCS",
+    category: "ORALS",
+    chemicalName: "Oxandrolone",
+    description:
+      "Cutting-friendly oral known for strength retention, muscle hardness and smoother recomposition cycles.",
+    strength: "10mg",
+    quantity: "100 Tablets",
+    price: 260,
+    priceDisplay: "260 TND",
+    isAvailable: true,
+    whatsappMessage: msg("Syrocs Anavar 10"),
+  },
   {
     id: "inj-001",
     name: "Test Suspension 50",

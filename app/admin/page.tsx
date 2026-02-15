@@ -3,9 +3,16 @@
 import { useState, useEffect } from "react";
 import { useProducts } from "@/contexts/ProductContext";
 import { useSettings } from "@/contexts/SettingsContext";
-import { Product, ProductCategory } from "@/data/products";
+import {
+  BRAND_LABELS,
+  Product,
+  ProductBrand,
+  ProductCategory,
+  resolveProductBrand,
+} from "@/data/products";
 import Link from "next/link";
 
+const brands: ProductBrand[] = ["KEIFI", "SYROCS"];
 const categories: ProductCategory[] = [
   "INJECTABLES",
   "PEPTIDES",
@@ -70,7 +77,7 @@ export default function AdminPage() {
         <div className="w-full max-w-md">
           <div className="rounded-2xl border border-border bg-card-bg p-8 shadow-xl">
             <div className="mb-6 text-center">
-              <h1 className="text-2xl font-bold text-brand">Keifi Admin</h1>
+              <h1 className="text-2xl font-bold text-brand">Ghost Admin</h1>
               <p className="mt-2 text-sm text-text-muted">
                 Enter password to access dashboard
               </p>
@@ -128,6 +135,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   } = useProducts();
   const { settings, updateSettings } = useSettings();
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterBrand, setFilterBrand] = useState<ProductBrand | "ALL">("ALL");
   const [filterCategory, setFilterCategory] = useState<ProductCategory | "ALL">(
     "ALL",
   );
@@ -142,7 +150,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       p.chemicalName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
       filterCategory === "ALL" || p.category === filterCategory;
-    return matchesSearch && matchesCategory;
+    const matchesBrand =
+      filterBrand === "ALL" || resolveProductBrand(p) === filterBrand;
+    return matchesSearch && matchesCategory && matchesBrand;
   });
 
   const totalProducts = products.length;
@@ -154,7 +164,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       <header className="sticky top-0 z-40 border-b border-border bg-card-bg/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-brand">Keifi Admin</h1>
+            <h1 className="text-xl font-bold text-brand">Ghost Admin</h1>
             <span className="hidden rounded-full bg-badge-bg px-3 py-1 text-xs font-medium text-text-secondary sm:inline-block">
               {totalProducts} products
             </span>
@@ -232,11 +242,26 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             </div>
 
             <select
+              value={filterBrand}
+              onChange={(e) =>
+                setFilterBrand(e.target.value as ProductBrand | "ALL")
+              }
+              className="select-styled min-w-40 rounded-lg border border-border bg-background py-2 pl-4 text-sm text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            >
+              <option value="ALL">All Brands</option>
+              {brands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {BRAND_LABELS[brand]}
+                </option>
+              ))}
+            </select>
+
+            <select
               value={filterCategory}
               onChange={(e) =>
                 setFilterCategory(e.target.value as ProductCategory | "ALL")
               }
-              className="select-styled min-w-[180px] rounded-lg border border-border bg-background py-2 pl-4 text-sm text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+              className="select-styled min-w-45 rounded-lg border border-border bg-background py-2 pl-4 text-sm text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
             >
               <option value="ALL">All Categories</option>
               {categories.map((cat) => (
@@ -295,6 +320,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                       <div>
                         <p className="font-medium text-text-primary">
                           {product.name}
+                        </p>
+                        <p className="text-xs text-text-muted">
+                          {BRAND_LABELS[resolveProductBrand(product)]} •
                         </p>
                         <p className="text-xs text-text-muted">
                           {product.strength} • {product.quantity}
@@ -515,6 +543,7 @@ function ProductEditModal({
 }) {
   const [form, setForm] = useState({
     name: product.name,
+    brand: resolveProductBrand(product),
     chemicalName: product.chemicalName,
     description: product.description,
     strength: product.strength,
@@ -559,7 +588,7 @@ function ProductEditModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-text-secondary">
                 Name
@@ -571,6 +600,27 @@ function ProductEditModal({
                 className="w-full rounded-lg border border-border bg-background px-4 py-2 text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                 required
               />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-text-secondary">
+                Brand
+              </label>
+              <select
+                value={form.brand}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    brand: e.target.value as ProductBrand,
+                  })
+                }
+                className="w-full rounded-lg border border-border bg-background px-4 py-2 text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+              >
+                {brands.map((brand) => (
+                  <option key={brand} value={brand}>
+                    {BRAND_LABELS[brand]}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-text-secondary">
@@ -692,7 +742,7 @@ function ProductEditModal({
                 }
                 className="peer sr-only"
               />
-              <div className="h-6 w-11 rounded-full bg-badge-bg peer-checked:bg-success peer-focus:ring-2 peer-focus:ring-brand/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+              <div className="h-6 w-11 rounded-full bg-badge-bg peer-checked:bg-success peer-focus:ring-2 peer-focus:ring-brand/20 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
             </label>
             <span className="text-sm font-medium text-text-secondary">
               In Stock
@@ -729,6 +779,7 @@ function ProductAddModal({
 }) {
   const [form, setForm] = useState({
     name: "",
+    brand: "KEIFI" as ProductBrand,
     chemicalName: "",
     description: "",
     strength: "",
@@ -742,11 +793,14 @@ function ProductAddModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const id = `${form.category.toLowerCase().slice(0, 3)}-${Date.now()}`;
+    const id = `${form.brand.toLowerCase().slice(0, 3)}-${form.category
+      .toLowerCase()
+      .slice(0, 3)}-${Date.now()}`;
 
     const newProduct: Product = {
       id,
       name: form.name,
+      brand: form.brand,
       category: form.category,
       chemicalName: form.chemicalName,
       description: form.description,
@@ -790,7 +844,7 @@ function ProductAddModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-text-secondary">
                 Name *
@@ -802,6 +856,27 @@ function ProductAddModal({
                 className="w-full rounded-lg border border-border bg-background px-4 py-2 text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                 required
               />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-text-secondary">
+                Brand *
+              </label>
+              <select
+                value={form.brand}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    brand: e.target.value as ProductBrand,
+                  })
+                }
+                className="w-full rounded-lg border border-border bg-background px-4 py-2 text-text-primary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+              >
+                {brands.map((brand) => (
+                  <option key={brand} value={brand}>
+                    {BRAND_LABELS[brand]}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-text-secondary">
@@ -923,7 +998,7 @@ function ProductAddModal({
                 }
                 className="peer sr-only"
               />
-              <div className="h-6 w-11 rounded-full bg-badge-bg peer-checked:bg-success peer-focus:ring-2 peer-focus:ring-brand/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+              <div className="h-6 w-11 rounded-full bg-badge-bg peer-checked:bg-success peer-focus:ring-2 peer-focus:ring-brand/20 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
             </label>
             <span className="text-sm font-medium text-text-secondary">
               In Stock

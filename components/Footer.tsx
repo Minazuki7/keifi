@@ -15,8 +15,12 @@ export default function Footer() {
               href="/"
               className="mb-4 inline-block text-xl font-bold text-text-primary transition-colors hover:text-text-muted"
             >
-              Keifi
+              Ghost Catalogue
             </Link>
+            <p className="mb-4 text-sm text-text-secondary">
+              Featuring <strong>Keifi</strong> and <strong>Syrocs</strong>
+              product lines.
+            </p>
             <div className="rounded-xl border border-warning/30 bg-warning/5 p-5">
               <p className="text-sm leading-relaxed text-warning">
                 <strong>Disclaimer:</strong> These products are intended for
@@ -56,7 +60,7 @@ export default function Footer() {
 
         <div className="mt-12 border-t border-border pt-8 text-center">
           <p className="text-sm text-text-muted">
-            © {new Date().getFullYear()} Keifi. All rights reserved.
+            © {new Date().getFullYear()} Ghost. All rights reserved.
           </p>
         </div>
       </div>
