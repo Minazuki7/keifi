@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useBrand, BRAND_NAV_OPTIONS } from "@/contexts/BrandContext";
 
 export default function Header() {
   const { settings } = useSettings();
+  const { selectedBrand, setSelectedBrand } = useBrand();
 
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 border-b border-border bg-card-bg/90 backdrop-blur-md transition-colors duration-200">
@@ -17,7 +19,24 @@ export default function Header() {
           Ghost Catalogue
         </Link>
 
-
+        <div className="hidden items-center gap-1 rounded-full border border-border bg-background p-1 md:flex">
+          {BRAND_NAV_OPTIONS.map((option) => {
+            const isActive = selectedBrand === option.value;
+            return (
+              <button
+                key={option.value}
+                onClick={() => setSelectedBrand(option.value)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  isActive
+                    ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
 
         <div className="flex items-center gap-3 sm:gap-6">
           <ThemeToggle />

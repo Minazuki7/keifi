@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { BrandProvider } from "@/contexts/BrandContext";
 import Header from "@/components/Header";
 import { ReactNode } from "react";
 
@@ -13,8 +14,10 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       <SettingsProvider>
         <ProductProvider>
           <CartProvider>
-            <Header />
-            <main className="pt-16">{children}</main>
+            <BrandProvider>
+              <Header />
+              <main className="pt-16">{children}</main>
+            </BrandProvider>
           </CartProvider>
         </ProductProvider>
       </SettingsProvider>

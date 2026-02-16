@@ -3,21 +3,21 @@
 import { useMemo, useState } from "react";
 import {
   BRAND_LABELS,
-  ProductBrand,
   ProductCategory,
   resolveProductBrand,
 } from "@/data/products";
 import { useProducts } from "@/contexts/ProductContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useCart } from "@/contexts/CartContext";
+import { useBrand, BrandFilter, BRAND_NAV_OPTIONS } from "@/contexts/BrandContext";
 import CategoryTabs from "@/components/CategoryTabs";
 import ProductGrid from "@/components/ProductGrid";
 import CartPanel from "@/components/CartPanel";
 import Footer from "@/components/Footer";
 
-const brandOptions: Array<ProductBrand | "ALL"> = ["ALL", "KEIFI", "SYROCS"];
+const brandOptions = BRAND_NAV_OPTIONS.map((o) => o.value);
 
-const brandOptionLabels: Record<ProductBrand | "ALL", string> = {
+const brandOptionLabels: Record<BrandFilter, string> = {
   ALL: "Both Brands",
   KEIFI: BRAND_LABELS.KEIFI,
   SYROCS: BRAND_LABELS.SYROCS,
@@ -27,15 +27,13 @@ export default function Home() {
   const { products } = useProducts();
   const { settings } = useSettings();
   const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
-  const [selectedBrand, setSelectedBrand] = useState<ProductBrand | "ALL">(
-    "ALL",
-  );
+  const { selectedBrand, setSelectedBrand } = useBrand();
 
   const [selectedCategory, setSelectedCategory] = useState<
     ProductCategory | "ALL"
   >("ALL");
 
-  const handleBrandChange = (brand: ProductBrand | "ALL") => {
+  const handleBrandChange = (brand: BrandFilter) => {
     setSelectedBrand(brand);
     setSelectedCategory("ALL");
   };
